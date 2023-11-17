@@ -9,14 +9,14 @@ import {
   randNumber,
   randWord,
 } from '@ngneat/falso';
-import { map, timer } from 'rxjs';
+import { map, Observable, timer } from 'rxjs';
 import { City } from '../model/city.model';
 import { Student } from '../model/student.model';
 import { subject, Teacher } from '../model/teacher.model';
 
-const factoryTeacher = incrementalNumber();
+const factoryTeacher: () => number = incrementalNumber();
 
-export const randTeacher = () => ({
+export const randTeacher: () => Teacher = (): Teacher => ({
   id: factoryTeacher(),
   firstname: randFirstName(),
   lastname: randLastName(),
@@ -30,9 +30,9 @@ const teachers: Teacher[] = [
   randTeacher(),
 ];
 
-const factoryStudent = incrementalNumber();
+const factoryStudent: () => number = incrementalNumber();
 
-export const randStudent = (): Student => ({
+export const randStudent: () => Student = (): Student => ({
   id: factoryStudent(),
   firstname: randFirstName(),
   lastname: randLastName(),
@@ -48,21 +48,21 @@ const students: Student[] = [
   randStudent(),
 ];
 
-const factoryCity = incrementalNumber();
+const factoryCity: () => number = incrementalNumber();
 
-export const randomCity = (): City => ({
+export const randomCity: () => City = (): City => ({
   id: factoryCity(),
   name: randCity(),
   country: randCountry(),
 });
 
-const cities = [randomCity(), randomCity(), randomCity()];
+const cities: City[] = [randomCity(), randomCity(), randomCity()];
 
 @Injectable({
   providedIn: 'root',
 })
 export class FakeHttpService {
-  fetchTeachers$ = timer(500).pipe(map(() => teachers));
-  fetchStudents$ = timer(500).pipe(map(() => students));
-  fetchCities$ = timer(500).pipe(map(() => cities));
+  fetchTeachers$: Observable<Teacher[]> = timer(500).pipe(map(() => teachers));
+  fetchStudents$: Observable<Student[]> = timer(500).pipe(map(() => students));
+  fetchCities$: Observable<City[]> = timer(500).pipe(map(() => cities));
 }

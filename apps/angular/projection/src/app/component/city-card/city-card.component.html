@@ -1,0 +1,11 @@
+<app-card
+  [list]="cities"
+  [template]="template"
+  class="bg-light-blue"
+  (added)="handleAdd()"
+  (deleted)="handleDelete($event)">
+  <img
+    ngSrc="assets/img/city.jpg"
+    height=133 width=200 /> />
+</app-card>
+<ng-template #template let-item>{{ item?.name }}, {{ item?.country }}</ng-template>
