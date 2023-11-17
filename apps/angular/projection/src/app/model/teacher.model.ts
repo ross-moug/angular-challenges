@@ -1,3 +1,5 @@
+import { Item } from '../ui/list-item/list-item.component';
+
 export const subject = [
   'Sciences',
   'History',
@@ -7,7 +9,7 @@ export const subject = [
 ] as const;
 export type Subject = (typeof subject)[number];
 
-export interface Teacher {
+export interface Teacher extends Item {
   id: number;
   firstname: string;
   lastname: string;

@@ -1,35 +1,49 @@
-import { Component, Input } from '@angular/core';
-import { StudentStore } from '../../data-access/student.store';
-import { TeacherStore } from '../../data-access/teacher.store';
-import { CardType } from '../../model/card.model';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+} from '@angular/core';
+import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
+
+export interface Item {
+  id: number;
+}
+
+export interface TemplateContext<E extends Item> {
+  $implicit: E;
+}
 
 @Component({
   selector: 'app-list-item',
   template: `
     <div class="border border-grey-300 py-1 px-2 flex justify-between">
-      {{ name }}
-      <button (click)="delete(id)">
-        <img class="h-5" src="assets/svg/trash.svg" />
+      <ng-container
+        *ngTemplateOutlet="template; context: context"></ng-container>
+      <button (click)="delete(item.id)">
+        <img ngSrc="assets/svg/trash.svg" height="20" width="20" />
       </button>
     </div>
   `,
   standalone: true,
+  imports: [NgTemplateOutlet, NgOptimizedImage],
 })
-export class ListItemComponent {
-  @Input() id!: number;
-  @Input() name!: string;
-  @Input() type!: CardType;
+export class ListItemComponent<E extends Item> implements OnInit {
+  @Input() item!: E;
+  @Input() template!: TemplateRef<TemplateContext<E>>;
+  @Output() deleted: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor(
-    private teacherStore: TeacherStore,
-    private studentStore: StudentStore
-  ) {}
+  context!: TemplateContext<E>;
+
+  ngOnInit(): void {
+    this.context = {
+      $implicit: this.item,
+    };
+  }
 
   delete(id: number) {
-    if (this.type === CardType.TEACHER) {
-      this.teacherStore.deleteOne(id);
-    } else if (this.type === CardType.STUDENT) {
-      this.studentStore.deleteOne(id);
-    }
+    this.deleted.emit(id);
   }
 }
